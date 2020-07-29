@@ -26,8 +26,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException,
             IOException {
         try {
-            Authentication authentication = JWTTokenUtil.getAuthentication(request);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String uri = request.getRequestURI();
+            if (uri.startsWith("/api")) {
+                Authentication authentication = JWTTokenUtil.getAuthentication(request);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException |
                 SignatureException | IllegalArgumentException e) {
